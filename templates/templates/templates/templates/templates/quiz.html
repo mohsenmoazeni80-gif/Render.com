@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 p-4 text-center">
+            <h5 class="text-muted">کدام گزینه معنی درست واژه زیر است؟</h5>
+            <h1 class="display-2 text-primary my-4">{{ word.eng }}</h1>
+            
+            <div class="d-grid gap-3">
+                {% for opt in options %}
+                <button class="btn btn-outline-primary btn-lg py-3 fw-bold" onclick="checkAnswer(this, '{{ opt }}', '{{ word.farsi }}')">
+                    {{ opt }}
+                </button>
+                {% endfor %}
+            </div>
+            
+            <div id="feedback" class="mt-4 fs-4 fw-bold"></div>
+            <a href="/quiz" id="next-btn" class="btn btn-dark btn-lg mt-3 d-none">سوال بعدی ⮕</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function checkAnswer(btn, selected, correct) {
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const buttons = document.querySelectorAll('.btn-outline-primary');
+
+    buttons.forEach(b => b.disabled = true);
+
+    if (selected === correct) {
+        btn.classList.replace('btn-outline-primary', 'btn-success');
+        feedback.innerHTML = "✅ عالی بود! +۱۰ امتیاز";
+        feedback.className = "mt-4 fs-4 fw-bold text-success";
+        
+        // ارسال امتیاز به سرور
+        fetch('/update_score', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+    } else {
+        btn.classList.replace('btn-outline-primary', 'btn-danger');
+        feedback.innerHTML = "❌ اشتباه! معنی درست: " + correct;
+        feedback.className = "mt-4 fs-4 fw-bold text-danger";
+    }
+    nextBtn.classList.remove('d-none');
+}
+</script>
+{% endblock %}
