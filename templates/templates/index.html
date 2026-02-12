@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card bg-white shadow-sm border-0 p-3">
+            <div class="d-flex justify-content-between text-center">
+                <div><h6 class="text-muted">نیاز به مرور</h6><p class="h4">{{ stats.due }}</p></div>
+                <div><h6 class="text-muted">کل لغات</h6><p class="h4">{{ stats.total }}</p></div>
+                <div><h6 class="text-muted">سطح کاربر</h6><p class="h4 text-primary">{{ current_user.level }}</p></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 mb-4 p-3">
+            <form action="/add" method="POST">
+                <input type="text" name="word" class="form-control mb-2" placeholder="واژه انگلیسی..." required>
+                <button class="btn btn-primary w-100">افزودن هوشمند</button>
+            </form>
+            <a href="/quiz" class="btn btn-warning w-100 mt-3 fw-bold">📝 شروع کوییز</a>
+        </div>
+    </div>
+    <div class="col-md-8">
+        {% for word in words %}
+        <div class="card mb-3 shadow-sm border-0">
+            <img src="{{ word.image_url }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h3 class="text-primary">{{ word.eng }}</h3>
+                    <button onclick="speak('{{ word.eng }}')" class="btn btn-light btn-sm">🔊</button>
+                </div>
+                <p class="fs-5 fw-bold">{{ word.farsi }}</p>
+                <div class="btn-group w-100 mt-2">
+                    <a href="/review/{{word.id}}/easy" class="btn btn-success">بلد بودم</a>
+                    <a href="/review/{{word.id}}/hard" class="btn btn-outline-danger">فراموش کردم</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+function speak(t) {
+    let s = new SpeechSynthesisUtterance(t);
+    s.lang = 'en-US';
+    window.speechSynthesis.speak(s);
+}
+</script>
+{% endblock %}
